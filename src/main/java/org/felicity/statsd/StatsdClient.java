@@ -1,6 +1,5 @@
 package org.felicity.statsd;
 
-import org.felicity.statsd.impl.StatsdClient;
 import org.felicity.statsd.impl.config.Configuration;
 import org.felicity.statsd.impl.config.MissingConfigurationException;
 import org.felicity.statsd.impl.logging.SystemLogger;
@@ -15,13 +14,13 @@ import java.util.Map;
  * <p/>
  * Created by jeremyb on 03/04/2014.
  */
-public class Statsd implements StatsdClientInterface {
-    private static Statsd instance = new Statsd();
+public class StatsdClient implements StatsdClientInterface {
+    private static StatsdClient instance = new StatsdClient();
     private Map<String, String> configuration = null;
 
     private UdpConnection connection = null;
 
-    private StatsdClient client = null;
+    private org.felicity.statsd.impl.StatsdClient client = null;
 
     /**
      * Get an instance of the statsd object, configured with the passed config hash
@@ -29,7 +28,7 @@ public class Statsd implements StatsdClientInterface {
      * @param configuration a Map of string key / value pairs configuring the instance
      * @throws org.felicity.statsd.impl.config.MissingConfigurationException if mandatory keys are not provided
      */
-    public static Statsd getInstance(Map<String, String> configuration) throws MissingConfigurationException {
+    public static StatsdClient getInstance(Map<String, String> configuration) throws MissingConfigurationException {
         SystemLogger.info("Configuring connection to statsd server");
         instance.configureWith(instance.validateMandatoryConfiguration(configuration));
         instance.restart();
@@ -61,8 +60,8 @@ public class Statsd implements StatsdClientInterface {
         client.incrementUniqueCounter(prefix, bucket, count);
     }
 
-    public StatsdClient buildClient(UdpConnection connection) {
-        return new StatsdClient(connection);
+    public org.felicity.statsd.impl.StatsdClient buildClient(UdpConnection connection) {
+        return new org.felicity.statsd.impl.StatsdClient(connection);
     }
 
     public void disconnect() {
@@ -112,7 +111,7 @@ public class Statsd implements StatsdClientInterface {
         return proposedConfiguration;
     }
 
-    private Statsd() {
+    private StatsdClient() {
         super();
     }
 }
