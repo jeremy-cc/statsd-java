@@ -1,7 +1,6 @@
 package org.felicity.statsd;
 
 import junit.framework.TestCase;
-import org.felicity.statsd.impl.StatsdClient;
 import org.felicity.statsd.impl.config.MissingConfigurationException;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,7 +18,7 @@ import java.util.Map;
 public class StatsdTest extends TestCase {
 
     @Mock
-    private StatsdClient client;
+    private org.felicity.statsd.impl.StatsdClient client;
 
     @Before
     public void init() {
@@ -28,7 +27,7 @@ public class StatsdTest extends TestCase {
 
     @Test(expected=MissingConfigurationException.class)
     public void testGetInstance() throws Exception {
-        Statsd.getInstance(new HashMap<String,String>());
+        StatsdClient.getInstance(new HashMap<String, String>());
     }
 
     @Test
@@ -38,7 +37,7 @@ public class StatsdTest extends TestCase {
         configuration.put("statsd.host", "localhost");
         configuration.put("statsd.port", "8080");
 
-        Statsd instance = Statsd.getInstance(configuration);
+        StatsdClient instance = StatsdClient.getInstance(configuration);
         assertNotNull(instance);
     }
 
@@ -48,7 +47,7 @@ public class StatsdTest extends TestCase {
         configuration.put("statsd.host", "lon1devlctl001.ccycloud.com");
         configuration.put("statsd.port", "8125");
 
-        Statsd instance = Statsd.getInstance(configuration);
+        StatsdClient instance = StatsdClient.getInstance(configuration);
 
         instance.incrementCounter("pricing_engine", "test_counter", 1);
 
