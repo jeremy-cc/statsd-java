@@ -6,16 +6,18 @@ package org.felicity.statsd.impl.logging;
  */
 public class SystemLogger {
 
+    final static String PREFIX = "org.felicity.statsd";
+
     public static void info(String message) {
-        System.out.println(message);
+        System.out.println(String.format("%s: %s", PREFIX, message));
     }
 
     public static void error(String message) {
-        System.err.println(message);
+        System.err.println(String.format("%s: %s", PREFIX, message));
     }
 
     public static void error(String message, Exception exception) {
-        System.err.println(message);
+        System.err.println(String.format("%s: %s", PREFIX, message));
         System.err.println("Caused by: ");
         if(null != exception) {
             exception.printStackTrace(System.err);

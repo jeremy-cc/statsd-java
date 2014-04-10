@@ -30,7 +30,7 @@ public class Statsd implements StatsdClientInterface {
      * @throws org.felicity.statsd.impl.config.MissingConfigurationException if mandatory keys are not provided
      */
     public static Statsd getInstance(Map<String, String> configuration) throws MissingConfigurationException {
-        SystemLogger.error("Loading class");
+        SystemLogger.info("Configuring connection to statsd server");
         instance.configureWith(instance.validateMandatoryConfiguration(configuration));
         instance.restart();
         return instance;

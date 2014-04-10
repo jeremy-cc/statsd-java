@@ -6,7 +6,7 @@
 
     <groupId>jruby</groupId>
     <artifactId>statsd-java-nonblocking</artifactId>
-    <version>1.0-RC</version>
+    <version>1.0.0</version>
     <properties>
         <project_gem_dir>statsd</project_gem_dir>
         <ruby_root>${user.home}/development/source/gems</ruby_root>
