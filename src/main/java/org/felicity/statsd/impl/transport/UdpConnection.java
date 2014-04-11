@@ -15,13 +15,15 @@ public class UdpConnection implements UdpConnectionInterface {
 
     private DatagramSocket socket = null;
 
+    private String localHost;
     private String remoteHost;
     private int    remotePort;
 
-    public UdpConnection(String host, int port) {
+    public UdpConnection(String host, int port) throws UnknownHostException{
 
         remoteHost = host;
         remotePort = port;
+        localHost = InetAddress.getLocalHost().getCanonicalHostName().replaceAll("\\\\.", "_");
     }
 
     @Override
@@ -44,7 +46,9 @@ public class UdpConnection implements UdpConnectionInterface {
     }
 
     public void sendMessage(String message) throws IOException {
-        byte[] buffer = message.getBytes(CHARSET);
+        // prepend the local hostname
+        String _msg = String.format("%s.%s", localHost, message);
+        byte[] buffer = _msg.getBytes(CHARSET);
         socket.send(buildPacket(buffer));
     }
 

@@ -6,9 +6,9 @@
 
     <groupId>jruby</groupId>
     <artifactId>statsd-java-nonblocking</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <properties>
-        <project_gem_dir>statsd</project_gem_dir>
+        <project_gem_dir>tcc_statsd</project_gem_dir>
         <ruby_root>${user.home}/development/source/gems</ruby_root>
     </properties>
     <build>
