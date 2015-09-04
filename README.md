@@ -7,7 +7,7 @@ A lightweight, concurrent, threaded Statsd client for use in Java or JRuby appli
 
 # Description
 
-statsd-java is intended to be a lightweight statsd-compliant client which is able to send statsd instrumentation messages via UDP to a statsd server. It makes use of a single internal thread and a Conccurrent Queue in order to buffer
+statsd-java is intended to be a lightweight statsd-compliant client which is able to send statsd instrumentation messages via UDP to a statsd server. It makes use of a single internal thread and a Concurrent Queue in order to buffer
 data for dispatch asynchronously to the dispatch of this data.
 
 Usage:
