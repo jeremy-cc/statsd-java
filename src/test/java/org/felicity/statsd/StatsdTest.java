@@ -25,11 +25,6 @@ public class StatsdTest extends TestCase {
 
     }
 
-    @Test(expected=MissingConfigurationException.class)
-    public void testGetInstance() throws Exception {
-        StatsdClient.getInstance(new HashMap<String, String>());
-    }
-
     @Test
     public void testGetInstanceWithConfig() throws Exception{
 

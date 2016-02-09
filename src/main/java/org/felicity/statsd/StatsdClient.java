@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * Created by jeremyb on 03/04/2014.
  */
 public class StatsdClient implements StatsdClientInterface {
-    private static StatsdClient instance = new StatsdClient();
+    private static volatile StatsdClient instance = null;
     private Map<String, String> configuration = null;
 
     private UdpConnection connection = null;
@@ -34,13 +34,14 @@ public class StatsdClient implements StatsdClientInterface {
      * @throws org.felicity.statsd.impl.config.MissingConfigurationException if mandatory keys are not provided
      */
     public static StatsdClient getInstance(Map<String, String> configuration) throws MissingConfigurationException, UnknownHostException {
-        synchronized (org.felicity.statsd.impl.StatsdClient.class) {
-            if (!instance.isConfigured()) {
-                SystemLogger.info("Configuring connection to statsd server");
-                instance.configureWith(instance.validateMandatoryConfiguration(configuration));
-            }
-            if (!instance.isConnected()) {
-                instance.restart();
+        if(null == instance) {
+            synchronized (org.felicity.statsd.impl.StatsdClient.class) {
+                if (null == instance) {
+                    instance = new StatsdClient();
+                    SystemLogger.info("Configuring connection to statsd server");
+                    instance.configureWith(instance.validateMandatoryConfiguration(configuration));
+                    instance.restart();
+                }
             }
         }
         return instance;
