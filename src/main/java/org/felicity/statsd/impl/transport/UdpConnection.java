@@ -68,7 +68,6 @@ public class UdpConnection implements UdpConnectionInterface {
     }
 
     private DatagramSocket getSocket() throws SocketException {
-        attemptConnection();
         return socket;
     }
 
@@ -80,6 +79,7 @@ public class UdpConnection implements UdpConnectionInterface {
         if (null == socket) {
             socket = createSocket();
         }
+
         if (null != socket && !socket.isConnected()) {
             try {
                 socket.connect(getRemoteEndpoint());

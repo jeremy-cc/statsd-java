@@ -34,12 +34,14 @@ public class StatsdClient implements StatsdClientInterface {
      * @throws org.felicity.statsd.impl.config.MissingConfigurationException if mandatory keys are not provided
      */
     public static StatsdClient getInstance(Map<String, String> configuration) throws MissingConfigurationException, UnknownHostException {
-        if(!instance.isConfigured()) {
-            SystemLogger.info("Configuring connection to statsd server");
-            instance.configureWith(instance.validateMandatoryConfiguration(configuration));
-        }
-        if(!instance.isConnected()) {
-            instance.restart();
+        synchronized (org.felicity.statsd.impl.StatsdClient.class) {
+            if (!instance.isConfigured()) {
+                SystemLogger.info("Configuring connection to statsd server");
+                instance.configureWith(instance.validateMandatoryConfiguration(configuration));
+            }
+            if (!instance.isConnected()) {
+                instance.restart();
+            }
         }
         return instance;
     }
@@ -103,14 +105,18 @@ public class StatsdClient implements StatsdClientInterface {
             connection.disconnect();
             connected.compareAndSet(true, false);
         }
+
         String host = configuration.get(Configuration.CONFIG_HOST);
         int port = Integer.parseInt(configuration.get(Configuration.CONFIG_PORT));
         connection = new UdpConnection(host, port);
         client = buildClient(connection);
+
         try {
             connection.connect();
-            connected.compareAndSet(false, true);
-            client.startMeasurements();
+            if(connection.isConnected()) {
+                connected.compareAndSet(false, true);
+                client.startMeasurements();
+            }
         } catch(SocketException se) {
             SystemLogger.error("Unable to connect to remote host", se);
         }
