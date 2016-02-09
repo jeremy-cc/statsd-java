@@ -6,10 +6,10 @@
 
     <groupId>jruby</groupId>
     <artifactId>statsd-java-nonblocking</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
     <properties>
         <project_gem_dir>tcc_statsd</project_gem_dir>
-        <ruby_root>${user.home}/development/source/gems</ruby_root>
+        <ruby_root>${user.home}/development/platform/internal/lib/j_statsd/lib/j_statsd/</ruby_root>
     </properties>
     <build>
         <outputDirectory>build</outputDirectory>
@@ -34,7 +34,7 @@
                                     <version>${project.version}</version>
                                     <type>${project.packaging}</type>
                                     <overWrite>false</overWrite>
-                                    <outputDirectory>${ruby_root}/${project_gem_dir}/lib</outputDirectory>
+                                    <outputDirectory>${ruby_root}</outputDirectory>
                                     <destFileName>${project.artifactId}-${project.version}.${project.packaging}</destFileName>
                                 </artifactItem>
                             </artifactItems>

@@ -6,7 +6,9 @@ import org.felicity.statsd.impl.logging.SystemLogger;
 import org.felicity.statsd.impl.transport.UdpConnection;
 
 import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Base class for the statsd package.  Supports configuration; retrieval of the actual messaging interface
@@ -22,16 +24,23 @@ public class StatsdClient implements StatsdClientInterface {
 
     private org.felicity.statsd.impl.StatsdClient client = null;
 
+    private AtomicBoolean configured = new AtomicBoolean(false);
+    private AtomicBoolean connected = new AtomicBoolean(false);
+
     /**
      * Get an instance of the statsd object, configured with the passed config hash
      *
      * @param configuration a Map of string key / value pairs configuring the instance
      * @throws org.felicity.statsd.impl.config.MissingConfigurationException if mandatory keys are not provided
      */
-    public static StatsdClient getInstance(Map<String, String> configuration) throws MissingConfigurationException {
-        SystemLogger.info("Configuring connection to statsd server");
-        instance.configureWith(instance.validateMandatoryConfiguration(configuration));
-        instance.restart();
+    public static StatsdClient getInstance(Map<String, String> configuration) throws MissingConfigurationException, UnknownHostException {
+        if(!instance.isConfigured()) {
+            SystemLogger.info("Configuring connection to statsd server");
+            instance.configureWith(instance.validateMandatoryConfiguration(configuration));
+        }
+        if(!instance.isConnected()) {
+            instance.restart();
+        }
         return instance;
     }
 
@@ -60,6 +69,14 @@ public class StatsdClient implements StatsdClientInterface {
         client.incrementUniqueCounter(prefix, bucket, count);
     }
 
+    public boolean isConfigured() {
+        return configured.get();
+    }
+
+    public boolean isConnected() {
+        return connected.get();
+    }
+
     public org.felicity.statsd.impl.StatsdClient buildClient(UdpConnection connection) {
         return new org.felicity.statsd.impl.StatsdClient(connection);
     }
@@ -77,13 +94,14 @@ public class StatsdClient implements StatsdClientInterface {
     /**
      * close and recycle any UDP connections underlying this statsd object, create a new connection, and bind to the remote host
      */
-    private void restart() {
+    private void restart() throws UnknownHostException{
         if(null != connection && connection.isConnected()) {
             if(null != client) {
                 // ensure we spool any queued data
                 client.finishMeasurements();
             }
             connection.disconnect();
+            connected.compareAndSet(true, false);
         }
         String host = configuration.get(Configuration.CONFIG_HOST);
         int port = Integer.parseInt(configuration.get(Configuration.CONFIG_PORT));
@@ -91,6 +109,7 @@ public class StatsdClient implements StatsdClientInterface {
         client = buildClient(connection);
         try {
             connection.connect();
+            connected.compareAndSet(false, true);
             client.startMeasurements();
         } catch(SocketException se) {
             SystemLogger.error("Unable to connect to remote host", se);
@@ -100,6 +119,7 @@ public class StatsdClient implements StatsdClientInterface {
     // private methods
     private void configureWith(Map<String, String> configuration) {
         this.configuration = configuration;
+        this.configured.compareAndSet(false, true);
     }
 
     private Map<String, String> validateMandatoryConfiguration(Map<String, String> proposedConfiguration) throws MissingConfigurationException {

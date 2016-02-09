@@ -5,6 +5,7 @@ import org.felicity.statsd.impl.logging.SystemLogger;
 import java.io.IOException;
 import java.net.*;
 import java.nio.charset.UnsupportedCharsetException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Implements the logic necessary to send messages to a remote UDP socket
@@ -12,14 +13,16 @@ import java.nio.charset.UnsupportedCharsetException;
  */
 public class UdpConnection implements UdpConnectionInterface {
     final String CHARSET = "ISO-8859-1";
+    final int MAX_COUNT = 3;
 
     private DatagramSocket socket = null;
 
     private String localHost;
     private String remoteHost;
-    private int    remotePort;
+    private int remotePort;
+    private AtomicInteger connectionCount = new AtomicInteger(0);
 
-    public UdpConnection(String host, int port) throws UnknownHostException{
+    public UdpConnection(String host, int port) throws UnknownHostException {
 
         remoteHost = host;
         remotePort = port;
@@ -49,21 +52,42 @@ public class UdpConnection implements UdpConnectionInterface {
         // prepend the local hostname
         String _msg = String.format("%s.%s", localHost, message);
         byte[] buffer = _msg.getBytes(CHARSET);
-        socket.send(buildPacket(buffer));
+        getSocket().send(buildPacket(buffer));
     }
 
-    private DatagramPacket buildPacket(byte [] buffer) {
+    private DatagramPacket buildPacket(byte[] buffer)  throws SocketException {
         DatagramPacket pkt = new DatagramPacket(buffer, buffer.length);
-        pkt.setSocketAddress(socket.getRemoteSocketAddress());
+        pkt.setSocketAddress(getSocket().getRemoteSocketAddress());
         return pkt;
     }
 
     @Override
     public void connect() throws SocketException {
         disconnect(); // ensure we recycle any resources held by a prior connection
-        socket = createSocket();
-        InetSocketAddress address = getRemoteEndpoint();
-        socket.connect(address);
+        attemptConnection();
+    }
+
+    private DatagramSocket getSocket() throws SocketException {
+        attemptConnection();
+        return socket;
+    }
+
+    private void attemptConnection() throws SocketException {
+        int localCount = connectionCount.incrementAndGet();
+        if(localCount > MAX_COUNT) {
+            throw new SocketException("Exceeded max connection attempts; abandoning statsd connection");
+        }
+        if (null == socket) {
+            socket = createSocket();
+        }
+        if (null != socket && !socket.isConnected()) {
+            try {
+                socket.connect(getRemoteEndpoint());
+                connectionCount.compareAndSet(localCount, 0); // reset if nothing else has touched this.
+            } catch (Exception exc) {
+                SystemLogger.error(String.format("Unable to create socket : %s", exc.getMessage()));
+            }
+        }
     }
 
     public DatagramSocket createSocket() throws SocketException {
