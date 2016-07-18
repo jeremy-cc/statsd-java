@@ -7,6 +7,7 @@ import org.felicity.statsd.impl.transport.UdpConnection;
 
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -48,28 +49,28 @@ public class StatsdClient implements StatsdClientInterface {
     }
 
     @Override
-    public void incrementCounter(String prefix, String bucket, int count) {
-        client.incrementCounter(prefix, bucket, count);
+    public void incrementCounter(String prefix, String bucket, HashMap<String,String> tags, int count) {
+        client.incrementCounter(prefix, bucket, tags, count);
     }
 
     @Override
-    public void incrementSampleCounter(String prefix, String bucket, int count, double sampleRate) {
-        client.incrementSampleCounter(prefix, bucket, count, sampleRate);
+    public void incrementSampleCounter(String prefix, String bucket, HashMap<String,String> tags, int count, double sampleRate) {
+        client.incrementSampleCounter(prefix, bucket, tags, count, sampleRate);
     }
 
     @Override
-    public void gaugeReading(String prefix, String bucket, int count) {
-        client.gaugeReading(prefix, bucket, count);
+    public void gaugeReading(String prefix, String bucket, HashMap<String,String> tags, int count) {
+        client.gaugeReading(prefix, bucket, tags, count);
     }
 
     @Override
-    public void timedEvent(String prefix, String bucket, int eventDurationInMs) {
-        client.timedEvent(prefix, bucket, eventDurationInMs);
+    public void timedEvent(String prefix, String bucket, HashMap<String,String> tags, int eventDurationInMs) {
+        client.timedEvent(prefix, bucket, tags, eventDurationInMs);
     }
 
     @Override
-    public void incrementUniqueCounter(String prefix, String bucket, int count) {
-        client.incrementUniqueCounter(prefix, bucket, count);
+    public void incrementUniqueCounter(String prefix, String bucket, HashMap<String,String> tags, int count) {
+        client.incrementUniqueCounter(prefix, bucket, tags, count);
     }
 
     public boolean isConfigured() {

@@ -26,7 +26,7 @@ public class UdpConnection implements UdpConnectionInterface {
 
         remoteHost = host;
         remotePort = port;
-        localHost = InetAddress.getLocalHost().getCanonicalHostName().replaceAll("\\\\.", "_");
+//        localHost = InetAddress.getLocalHost().getCanonicalHostName().replaceAll("\\\\.", "_");
     }
 
     @Override
@@ -50,8 +50,8 @@ public class UdpConnection implements UdpConnectionInterface {
 
     public void sendMessage(String message) throws IOException {
         // prepend the local hostname
-        String _msg = String.format("%s.%s", localHost, message);
-        byte[] buffer = _msg.getBytes(CHARSET);
+//        String _msg = String.format("%s.%s", localHost, message);
+        byte[] buffer = message.getBytes(CHARSET);
         getSocket().send(buildPacket(buffer));
     }
 

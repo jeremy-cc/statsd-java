@@ -1,5 +1,7 @@
 package org.felicity.statsd;
 
+import java.util.HashMap;
+
 /**
  * Defines the basic interface for the statsd subsystem.
  *
@@ -8,9 +10,9 @@ package org.felicity.statsd;
  * Created by jeremyb on 03/04/2014.
  */
 public interface StatsdClientInterface {
-    public void incrementCounter(String prefix, String bucket, int count);
-    public void incrementSampleCounter(String prefix, String bucket, int count, double sampleRate);
-    public void gaugeReading(String prefix, String bucket, int count);
-    public void timedEvent(String prefix, String bucket, int eventDurationInMs);
-    public void incrementUniqueCounter(String prefix, String bucket, int count);
+    public void incrementCounter(String prefix, String bucket, HashMap<String,String> tags, int count);
+    public void incrementSampleCounter(String prefix, String bucket, HashMap<String,String> tags, int count, double sampleRate);
+    public void gaugeReading(String prefix, String bucket, HashMap<String,String> tags, int count);
+    public void timedEvent(String prefix, String bucket, HashMap<String,String> tags, int eventDurationInMs);
+    public void incrementUniqueCounter(String prefix, String bucket, HashMap<String,String> tags, int count);
 }

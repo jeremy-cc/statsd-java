@@ -25,26 +25,30 @@ public class StatsdTest extends TestCase {
 
     }
 
-    @Test
-    public void testGetInstanceWithConfig() throws Exception{
-
-        Map<String,String> configuration = new HashMap<String,String>();
-        configuration.put("statsd.host", "localhost");
-        configuration.put("statsd.port", "8080");
-
-        StatsdClient instance = StatsdClient.getInstance(configuration);
-        assertNotNull(instance);
-    }
+//    @Test
+//    public void testGetInstanceWithConfig() throws Exception{
+//
+//        Map<String,String> configuration = new HashMap<String,String>();
+//        configuration.put("statsd.host", "localhost");
+//        configuration.put("statsd.port", "8080");
+//
+//        StatsdClient instance = StatsdClient.getInstance(configuration);
+//        assertNotNull(instance);
+//    }
 
     @Test
     public void testActualConnection() throws Exception {
         Map<String,String> configuration = new HashMap<String,String>();
-        configuration.put("statsd.host", "lon1devlctl001.ccycloud.com");
+        configuration.put("statsd.host", "localhost");
         configuration.put("statsd.port", "8125");
 
         StatsdClient instance = StatsdClient.getInstance(configuration);
 
-        instance.incrementCounter("pricing_engine", "test_counter", 1);
+        HashMap<String,String> tmp = new HashMap<String,String>();
+        tmp.put("provider", "OANDA");
+        tmp.put("server", "vagrant");
+
+        instance.incrementCounter("testing", "test_counter", tmp, 1);
 
         Thread.sleep(1000l);
 
