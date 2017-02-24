@@ -23,24 +23,34 @@ public class StatsdClient implements StatsdClientInterface{
     public final String SIMPLE_COUNT_FORMAT = "%s.%s:%d|c";
     public final String SAMPLED_COUNT_FORMAT = "%s.%s:%d|@%.3f";
 
+    // TCC-9027 do not enqueue new events if we do not have a connection established
+
     @Override
     public void incrementCounter(String prefix, String bucket, int count) {
-        eventQueue.add(String.format(SIMPLE_COUNT_FORMAT, prefix, bucket, count));
+        if(connection.isConnected()) {
+            eventQueue.add(String.format(SIMPLE_COUNT_FORMAT, prefix, bucket, count));
+        }
     }
 
     @Override
     public void incrementSampleCounter(String prefix, String bucket, int count, double sampleRate) {
-        eventQueue.add(String.format(SAMPLED_COUNT_FORMAT, prefix, bucket, count, sampleRate));
+        if(connection.isConnected()) {
+            eventQueue.add(String.format(SAMPLED_COUNT_FORMAT, prefix, bucket, count, sampleRate));
+        }
     }
 
     @Override
     public void gaugeReading(String prefix, String bucket, int count) {
-        eventQueue.add(String.format(GAUGED_EVENT_FORMAT, prefix, bucket, count));
+        if(connection.isConnected()) {
+            eventQueue.add(String.format(GAUGED_EVENT_FORMAT, prefix, bucket, count));
+        }
     }
 
     @Override
     public void timedEvent(String prefix, String bucket, int eventDurationInMs) {
-        eventQueue.add(String.format(TIMED_EVENT_FORMAT, prefix, bucket, eventDurationInMs));
+        if(connection.isConnected()) {
+            eventQueue.add(String.format(TIMED_EVENT_FORMAT, prefix, bucket, eventDurationInMs));
+        }
     }
 
     @Override
@@ -99,8 +109,16 @@ public class StatsdClient implements StatsdClientInterface{
                         SystemLogger.error(e.getMessage());
                     }
                 } else {
-                    // spool everything that's queued when possible
-                    dispatchAllEnqueuedEvents();
+                    if(connection.isConnected()) {
+                        // spool everything that's queued when possible
+                        dispatchAllEnqueuedEvents();
+                    } else {
+                        try {
+                            Thread.sleep(100l);
+                        } catch (InterruptedException e) {
+                            SystemLogger.error(e.getMessage());
+                        }
+                    }
                 }
             }
         }
