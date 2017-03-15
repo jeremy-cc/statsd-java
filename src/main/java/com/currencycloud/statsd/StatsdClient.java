@@ -1,9 +1,9 @@
-package org.felicity.statsd;
+package com.currencycloud.statsd;
 
-import org.felicity.statsd.impl.config.Configuration;
-import org.felicity.statsd.impl.config.MissingConfigurationException;
-import org.felicity.statsd.impl.logging.SystemLogger;
-import org.felicity.statsd.impl.transport.UdpConnection;
+import com.currencycloud.statsd.impl.config.Configuration;
+import com.currencycloud.statsd.impl.config.MissingConfigurationException;
+import com.currencycloud.statsd.impl.logging.SystemLogger;
+import com.currencycloud.statsd.impl.transport.UdpConnection;
 
 import java.net.SocketException;
 import java.net.UnknownHostException;
@@ -22,7 +22,7 @@ public class StatsdClient implements StatsdClientInterface {
 
     private UdpConnection connection = null;
 
-    private org.felicity.statsd.impl.StatsdClient client = null;
+    private com.currencycloud.statsd.impl.StatsdClient client = null;
 
     private AtomicBoolean configured = new AtomicBoolean(false);
     private AtomicBoolean connected = new AtomicBoolean(false);
@@ -31,11 +31,11 @@ public class StatsdClient implements StatsdClientInterface {
      * Get an instance of the statsd object, configured with the passed config hash
      *
      * @param configuration a Map of string key / value pairs configuring the instance
-     * @throws org.felicity.statsd.impl.config.MissingConfigurationException if mandatory keys are not provided
+     * @throws com.currencycloud.statsd.impl.config.MissingConfigurationException if mandatory keys are not provided
      */
     public static StatsdClient getInstance(Map<String, String> configuration) throws MissingConfigurationException, UnknownHostException {
         if(null == instance) {
-            synchronized (org.felicity.statsd.impl.StatsdClient.class) {
+            synchronized (com.currencycloud.statsd.impl.StatsdClient.class) {
                 if (null == instance) {
                     instance = new StatsdClient();
                     SystemLogger.info("Configuring connection to statsd server");
@@ -48,40 +48,36 @@ public class StatsdClient implements StatsdClientInterface {
     }
 
     @Override
-    public void incrementCounter(String prefix, String bucket, int count) {
-        client.incrementCounter(prefix, bucket, count);
+    public void incrementCounter(String prefix, String bucket, Map<String,String> tags, int count) {
+        client.incrementCounter(prefix, bucket, tags, count);
     }
 
     @Override
-    public void incrementSampleCounter(String prefix, String bucket, int count, double sampleRate) {
-        client.incrementSampleCounter(prefix, bucket, count, sampleRate);
+    public void incrementSampleCounter(String prefix, String bucket, Map<String,String> tags, int count, double sampleRate) {
+        client.incrementSampleCounter(prefix, bucket, tags, count, sampleRate);
     }
 
     @Override
-    public void gaugeReading(String prefix, String bucket, int count) {
-        client.gaugeReading(prefix, bucket, count);
+    public void gaugeReading(String prefix, String bucket, Map<String,String> tags, int count) {
+        client.gaugeReading(prefix, bucket, tags, count);
     }
 
     @Override
-    public void timedEvent(String prefix, String bucket, int eventDurationInMs) {
-        client.timedEvent(prefix, bucket, eventDurationInMs);
+    public void timedEvent(String prefix, String bucket, Map<String,String> tags, int eventDurationInMs) {
+        client.timedEvent(prefix, bucket, tags, eventDurationInMs);
     }
 
     @Override
-    public void incrementUniqueCounter(String prefix, String bucket, int count) {
-        client.incrementUniqueCounter(prefix, bucket, count);
-    }
-
-    public boolean isConfigured() {
-        return configured.get();
+    public void incrementUniqueCounter(String prefix, String bucket, Map<String,String> tags, int count) {
+        client.incrementUniqueCounter(prefix, bucket, tags, count);
     }
 
     public boolean isConnected() {
         return connected.get();
     }
 
-    public org.felicity.statsd.impl.StatsdClient buildClient(UdpConnection connection) {
-        return new org.felicity.statsd.impl.StatsdClient(connection);
+    public com.currencycloud.statsd.impl.StatsdClient buildClient(UdpConnection connection) {
+        return new com.currencycloud.statsd.impl.StatsdClient(connection);
     }
 
     public void disconnect() {

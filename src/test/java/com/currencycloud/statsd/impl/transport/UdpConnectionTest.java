@@ -1,4 +1,4 @@
-package org.felicity.statsd.impl.transport;
+package com.currencycloud.statsd.impl.transport;
 
 import org.junit.Before;
 import org.junit.Test;

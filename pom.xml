@@ -6,7 +6,7 @@
 
     <groupId>jruby</groupId>
     <artifactId>statsd-java-nonblocking</artifactId>
-    <version>1.0.6  </version>
+    <version>1.0.7</version>
     <properties>
         <project_gem_dir>tcc_statsd</project_gem_dir>
         <ruby_root>${user.home}/development/platform/internal/lib/j_statsd/lib/j_statsd/</ruby_root>

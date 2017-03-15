@@ -1,11 +1,12 @@
-package org.felicity.statsd.impl;
+package com.currencycloud.statsd.impl;
 
-import org.felicity.statsd.StatsdClientInterface;
-import org.felicity.statsd.impl.logging.SystemLogger;
-import org.felicity.statsd.impl.transport.UdpConnectionInterface;
+import com.currencycloud.statsd.StatsdClientInterface;
+import com.currencycloud.statsd.impl.logging.SystemLogger;
+import com.currencycloud.statsd.impl.transport.UdpConnectionInterface;
 
 import java.util.AbstractQueue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.Map;
 
 /**
  * Concrete implementation of the statsd client
@@ -18,43 +19,44 @@ public class StatsdClient implements StatsdClientInterface{
 
     private AbstractQueue<String> eventQueue = new ConcurrentLinkedQueue<String>();
 
-    public final String TIMED_EVENT_FORMAT = "%s.%s:%d|ms";
-    public final String GAUGED_EVENT_FORMAT = "%s.%s:%d|g";
-    public final String SIMPLE_COUNT_FORMAT = "%s.%s:%d|c";
-    public final String SAMPLED_COUNT_FORMAT = "%s.%s:%d|@%.3f";
+    public final String TIMED_EVENT_FORMAT = "%s.%s,%s:%d|ms";
+    public final String GAUGED_EVENT_FORMAT = "%s.%s,%s:%d|g";
+    public final String SIMPLE_COUNT_FORMAT = "%s.%s,%s:%d|c";
+    public final String SAMPLED_COUNT_FORMAT = "%s.%s,%s:%d|@%.3f";
 
+    public final String TAG_BLOCK = "%s=%s,";
     // TCC-9027 do not enqueue new events if we do not have a connection established
 
     @Override
-    public void incrementCounter(String prefix, String bucket, int count) {
+    public void incrementCounter(String prefix, String bucket, Map<String,String> tags, int count) {
         if(connection.isConnected()) {
-            eventQueue.add(String.format(SIMPLE_COUNT_FORMAT, prefix, bucket, count));
+            eventQueue.add(String.format(SIMPLE_COUNT_FORMAT, prefix, bucket, join(tags), count));
         }
     }
 
     @Override
-    public void incrementSampleCounter(String prefix, String bucket, int count, double sampleRate) {
+    public void incrementSampleCounter(String prefix, String bucket, Map<String,String> tags, int count, double sampleRate) {
         if(connection.isConnected()) {
-            eventQueue.add(String.format(SAMPLED_COUNT_FORMAT, prefix, bucket, count, sampleRate));
+            eventQueue.add(String.format(SAMPLED_COUNT_FORMAT, prefix, bucket, count, join(tags), sampleRate));
         }
     }
 
     @Override
-    public void gaugeReading(String prefix, String bucket, int count) {
+    public void gaugeReading(String prefix, String bucket, Map<String,String> tags, int count) {
         if(connection.isConnected()) {
-            eventQueue.add(String.format(GAUGED_EVENT_FORMAT, prefix, bucket, count));
+            eventQueue.add(String.format(GAUGED_EVENT_FORMAT, prefix, bucket, join(tags), count));
         }
     }
 
     @Override
-    public void timedEvent(String prefix, String bucket, int eventDurationInMs) {
+    public void timedEvent(String prefix, String bucket, Map<String,String> tags, int eventDurationInMs) {
         if(connection.isConnected()) {
-            eventQueue.add(String.format(TIMED_EVENT_FORMAT, prefix, bucket, eventDurationInMs));
+            eventQueue.add(String.format(TIMED_EVENT_FORMAT, prefix, bucket, join(tags), eventDurationInMs));
         }
     }
 
     @Override
-    public void incrementUniqueCounter(String prefix, String bucket, int count) {
+    public void incrementUniqueCounter(String prefix, String bucket, Map<String,String> tags, int count) {
         throw new RuntimeException("Not yet implemented.");
     }
 
@@ -77,6 +79,14 @@ public class StatsdClient implements StatsdClientInterface{
         }
     }
 
+    // join all keys in format k=v separated by commas
+    private String join(Map<String,String> tags) {
+        StringBuilder sb = new StringBuilder();
+        for(String k : tags.keySet()) {
+            sb.append(String.format(TAG_BLOCK, k, tags.get(k)));
+        }
+        return sb.substring(0, sb.length()-1); // omit final comma
+    }
 
     class Dispatcher implements Runnable {
         private boolean running = false;

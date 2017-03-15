@@ -1,4 +1,4 @@
-package org.felicity.statsd.impl.logging;
+package com.currencycloud.statsd.impl.logging;
 
 /**
  * Basic spool to console
@@ -6,7 +6,7 @@ package org.felicity.statsd.impl.logging;
  */
 public class SystemLogger {
 
-    final static String PREFIX = "org.felicity.statsd";
+    final static String PREFIX = "com.currencycloud.statsd";
 
     public static void info(String message) {
         System.out.println(String.format("%s: %s", PREFIX, message));

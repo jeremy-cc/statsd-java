@@ -1,7 +1,7 @@
 statsd-java
 ===========
 
-# Version 1.0
+# Version 1.0.7
 
 A lightweight, concurrent, threaded Statsd client for use in Java or JRuby applications which require only basic instrumentation.
 
@@ -19,8 +19,13 @@ Usage:
         // create and obtain an instance
         Statsd instance = Statsd.getInstance(configuration);
         
+        Map<String,String> tags = new HashMap<String,String>();
+        
+        tags.put("hostname", "machine-hostname");
+        tags.put("service", "service-name");
+        
         // increment a counter
-        instance.incrementCounter("pricing_engine", "test_counter", 1);
+        instance.incrementCounter("pricing_engine", "test_counter", tags, 1);
         
         // disconnect, cleanly close the thread and ensure any unsent buffered data is sent
         instance.disconnect();

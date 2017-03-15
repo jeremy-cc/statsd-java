@@ -1,4 +1,4 @@
-package org.felicity.statsd.impl.config;
+package com.currencycloud.statsd.impl.config;
 
 /**
  * Created by jeremyb on 03/04/2014.

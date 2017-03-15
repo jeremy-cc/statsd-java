@@ -1,7 +1,6 @@
-package org.felicity.statsd;
+package com.currencycloud.statsd;
 
 import junit.framework.TestCase;
-import org.felicity.statsd.impl.config.MissingConfigurationException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,7 +17,7 @@ import java.util.Map;
 public class StatsdTest extends TestCase {
 
     @Mock
-    private org.felicity.statsd.impl.StatsdClient client;
+    private com.currencycloud.statsd.impl.StatsdClient client;
 
     @Before
     public void init() {
@@ -44,7 +43,11 @@ public class StatsdTest extends TestCase {
 
         StatsdClient instance = StatsdClient.getInstance(configuration);
 
-        instance.incrementCounter("pricing_engine", "test_counter", 1);
+        HashMap<String,String> tags = new HashMap<String,String>();
+        tags.put("hostname", "machine-hostname");
+        tags.put("service", "service-name");
+
+        instance.incrementCounter("pricing_engine", "test_counter", tags, 1);
 
         Thread.sleep(1000l);
 
