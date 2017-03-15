@@ -1,6 +1,6 @@
-package org.felicity.statsd.impl.transport;
+package com.currencycloud.statsd.impl.transport;
 
-import org.felicity.statsd.impl.logging.SystemLogger;
+import com.currencycloud.statsd.impl.logging.SystemLogger;
 
 import java.io.IOException;
 import java.net.*;
