@@ -1,6 +1,6 @@
-package com.currencycloud.statsd.impl.transport;
+package com.ccycloud.aws.statsd.impl.transport;
 
-import com.currencycloud.statsd.impl.logging.SystemLogger;
+import com.ccycloud.aws.statsd.impl.logging.SystemLogger;
 
 import java.io.IOException;
 import java.net.*;
@@ -37,15 +37,16 @@ public class UdpConnection implements UdpConnectionInterface {
     @Override
     public boolean send(String message) {
         try {
-            sendMessage(message);
-            return true;
+            if(isConnected()) {
+                sendMessage(message);
+                return true;
+            }
         } catch (UnsupportedCharsetException uce) {
             SystemLogger.error(String.format("Unable to encode message in charset %s", CHARSET));
-            return false;
         } catch (IOException ioe) {
             SystemLogger.error(String.format("Unable to send packet : %s", ioe.getMessage()));
-            return false;
         }
+        return false;
     }
 
     public void sendMessage(String message) throws IOException {

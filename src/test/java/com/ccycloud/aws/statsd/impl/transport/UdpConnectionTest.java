@@ -1,4 +1,4 @@
-package com.currencycloud.statsd.impl.transport;
+package com.ccycloud.aws.statsd.impl.transport;
 
 import org.junit.Before;
 import org.junit.Test;

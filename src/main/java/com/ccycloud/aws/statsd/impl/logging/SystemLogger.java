@@ -1,4 +1,4 @@
-package com.currencycloud.statsd.impl.logging;
+package com.ccycloud.aws.statsd.impl.logging;
 
 /**
  * Basic spool to console
@@ -6,7 +6,7 @@ package com.currencycloud.statsd.impl.logging;
  */
 public class SystemLogger {
 
-    final static String PREFIX = "com.currencycloud.statsd";
+    final static String PREFIX = "com.ccycloud.aws.statsd";
 
     public static void info(String message) {
         System.out.println(String.format("%s: %s", PREFIX, message));

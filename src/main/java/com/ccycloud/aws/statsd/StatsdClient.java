@@ -1,9 +1,9 @@
-package com.currencycloud.statsd;
+package com.ccycloud.aws.statsd;
 
-import com.currencycloud.statsd.impl.config.Configuration;
-import com.currencycloud.statsd.impl.config.MissingConfigurationException;
-import com.currencycloud.statsd.impl.logging.SystemLogger;
-import com.currencycloud.statsd.impl.transport.UdpConnection;
+import com.ccycloud.aws.statsd.impl.config.Configuration;
+import com.ccycloud.aws.statsd.impl.config.MissingConfigurationException;
+import com.ccycloud.aws.statsd.impl.logging.SystemLogger;
+import com.ccycloud.aws.statsd.impl.transport.UdpConnection;
 
 import java.net.SocketException;
 import java.net.UnknownHostException;
@@ -22,23 +22,25 @@ public class StatsdClient implements StatsdClientInterface {
 
     private UdpConnection connection = null;
 
-    private com.currencycloud.statsd.impl.StatsdClient client = null;
+    private com.ccycloud.aws.statsd.impl.StatsdClient client = null;
 
     private AtomicBoolean configured = new AtomicBoolean(false);
     private AtomicBoolean connected = new AtomicBoolean(false);
+
+    public static final String version = "1.0.11";
 
     /**
      * Get an instance of the statsd object, configured with the passed config hash
      *
      * @param configuration a Map of string key / value pairs configuring the instance
-     * @throws com.currencycloud.statsd.impl.config.MissingConfigurationException if mandatory keys are not provided
+     * @throws com.ccycloud.aws.statsd.impl.config.MissingConfigurationException if mandatory keys are not provided
      */
-    public static StatsdClient getInstance(Map<String, String> configuration) throws MissingConfigurationException, UnknownHostException {
+    public static StatsdClient get(Map<String, String> configuration) throws MissingConfigurationException, UnknownHostException {
         if(null == instance) {
-            synchronized (com.currencycloud.statsd.impl.StatsdClient.class) {
+            synchronized (com.ccycloud.aws.statsd.impl.StatsdClient.class) {
                 if (null == instance) {
                     instance = new StatsdClient();
-                    SystemLogger.info("Configuring connection to statsd server");
+                    SystemLogger.info(String.format("Configuring connection to statsd server; client version: %s", version));
                     instance.configureWith(instance.validateMandatoryConfiguration(configuration));
                     instance.restart();
                 }
@@ -76,8 +78,8 @@ public class StatsdClient implements StatsdClientInterface {
         return connected.get();
     }
 
-    public com.currencycloud.statsd.impl.StatsdClient buildClient(UdpConnection connection) {
-        return new com.currencycloud.statsd.impl.StatsdClient(connection);
+    public com.ccycloud.aws.statsd.impl.StatsdClient buildClient(UdpConnection connection) {
+        return new com.ccycloud.aws.statsd.impl.StatsdClient(connection);
     }
 
     public void disconnect() {

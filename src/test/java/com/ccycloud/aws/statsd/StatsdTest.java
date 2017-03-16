@@ -1,4 +1,4 @@
-package com.currencycloud.statsd;
+package com.ccycloud.aws.statsd;
 
 import junit.framework.TestCase;
 import org.junit.Before;
@@ -17,7 +17,7 @@ import java.util.Map;
 public class StatsdTest extends TestCase {
 
     @Mock
-    private com.currencycloud.statsd.impl.StatsdClient client;
+    private com.ccycloud.aws.statsd.impl.StatsdClient client;
 
     @Before
     public void init() {
@@ -31,7 +31,7 @@ public class StatsdTest extends TestCase {
         configuration.put("statsd.host", "localhost");
         configuration.put("statsd.port", "8080");
 
-        StatsdClient instance = StatsdClient.getInstance(configuration);
+        StatsdClient instance = StatsdClient.get(configuration);
         assertNotNull(instance);
     }
 
@@ -41,7 +41,7 @@ public class StatsdTest extends TestCase {
         configuration.put("statsd.host", "lon1devlctl001.ccycloud.com");
         configuration.put("statsd.port", "8125");
 
-        StatsdClient instance = StatsdClient.getInstance(configuration);
+        StatsdClient instance = StatsdClient.get(configuration);
 
         HashMap<String,String> tags = new HashMap<String,String>();
         tags.put("hostname", "machine-hostname");

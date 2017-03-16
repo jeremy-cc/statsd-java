@@ -1,8 +1,8 @@
-package com.currencycloud.statsd.impl;
+package com.ccycloud.aws.statsd.impl;
 
-import com.currencycloud.statsd.StatsdClientInterface;
-import com.currencycloud.statsd.impl.logging.SystemLogger;
-import com.currencycloud.statsd.impl.transport.UdpConnectionInterface;
+import com.ccycloud.aws.statsd.StatsdClientInterface;
+import com.ccycloud.aws.statsd.impl.logging.SystemLogger;
+import com.ccycloud.aws.statsd.impl.transport.UdpConnectionInterface;
 
 import java.util.AbstractQueue;
 import java.util.concurrent.ConcurrentLinkedQueue;

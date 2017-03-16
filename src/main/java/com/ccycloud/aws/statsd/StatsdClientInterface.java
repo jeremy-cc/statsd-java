@@ -1,4 +1,4 @@
-package com.currencycloud.statsd;
+package com.ccycloud.aws.statsd;
 
 import java.util.Map;
 
