@@ -1,4 +1,4 @@
-package org.felicity.statsd.impl.transport;
+package com.ccycloud.aws.statsd.impl.transport;
 
 import java.net.SocketException;
 

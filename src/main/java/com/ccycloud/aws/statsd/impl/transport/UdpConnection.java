@@ -1,6 +1,6 @@
-package org.felicity.statsd.impl.transport;
+package com.ccycloud.aws.statsd.impl.transport;
 
-import org.felicity.statsd.impl.logging.SystemLogger;
+import com.ccycloud.aws.statsd.impl.logging.SystemLogger;
 
 import java.io.IOException;
 import java.net.*;
@@ -26,7 +26,7 @@ public class UdpConnection implements UdpConnectionInterface {
 
         remoteHost = host;
         remotePort = port;
-//        localHost = InetAddress.getLocalHost().getCanonicalHostName().replaceAll("\\\\.", "_");
+        localHost = InetAddress.getLocalHost().getCanonicalHostName().replaceAll("\\\\.", "_");
     }
 
     @Override
@@ -37,20 +37,21 @@ public class UdpConnection implements UdpConnectionInterface {
     @Override
     public boolean send(String message) {
         try {
-            sendMessage(message);
-            return true;
+            if(isConnected()) {
+                sendMessage(message);
+                return true;
+            }
         } catch (UnsupportedCharsetException uce) {
             SystemLogger.error(String.format("Unable to encode message in charset %s", CHARSET));
-            return false;
         } catch (IOException ioe) {
             SystemLogger.error(String.format("Unable to send packet : %s", ioe.getMessage()));
-            return false;
         }
+        return false;
     }
 
     public void sendMessage(String message) throws IOException {
         // prepend the local hostname
-//        String _msg = String.format("%s.%s", localHost, message);
+//        String _msg = String.format("%s", localHost, message);
         byte[] buffer = message.getBytes(CHARSET);
         getSocket().send(buildPacket(buffer));
     }

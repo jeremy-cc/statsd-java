@@ -1,13 +1,12 @@
-package org.felicity.statsd;
+package com.ccycloud.aws.statsd;
 
-import org.felicity.statsd.impl.config.Configuration;
-import org.felicity.statsd.impl.config.MissingConfigurationException;
-import org.felicity.statsd.impl.logging.SystemLogger;
-import org.felicity.statsd.impl.transport.UdpConnection;
+import com.ccycloud.aws.statsd.impl.config.Configuration;
+import com.ccycloud.aws.statsd.impl.config.MissingConfigurationException;
+import com.ccycloud.aws.statsd.impl.logging.SystemLogger;
+import com.ccycloud.aws.statsd.impl.transport.UdpConnection;
 
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -23,23 +22,25 @@ public class StatsdClient implements StatsdClientInterface {
 
     private UdpConnection connection = null;
 
-    private org.felicity.statsd.impl.StatsdClient client = null;
+    private com.ccycloud.aws.statsd.impl.StatsdClient client = null;
 
     private AtomicBoolean configured = new AtomicBoolean(false);
     private AtomicBoolean connected = new AtomicBoolean(false);
+
+    public static final String version = "1.0.12";
 
     /**
      * Get an instance of the statsd object, configured with the passed config hash
      *
      * @param configuration a Map of string key / value pairs configuring the instance
-     * @throws org.felicity.statsd.impl.config.MissingConfigurationException if mandatory keys are not provided
+     * @throws com.ccycloud.aws.statsd.impl.config.MissingConfigurationException if mandatory keys are not provided
      */
-    public static StatsdClient getInstance(Map<String, String> configuration) throws MissingConfigurationException, UnknownHostException {
+    public static StatsdClient get(Map<String, String> configuration) throws MissingConfigurationException, UnknownHostException {
         if(null == instance) {
-            synchronized (org.felicity.statsd.impl.StatsdClient.class) {
+            synchronized (com.ccycloud.aws.statsd.impl.StatsdClient.class) {
                 if (null == instance) {
                     instance = new StatsdClient();
-                    SystemLogger.info("Configuring connection to statsd server");
+                    SystemLogger.info(String.format("Configuring connection to statsd server; client version: %s", version));
                     instance.configureWith(instance.validateMandatoryConfiguration(configuration));
                     instance.restart();
                 }
@@ -49,27 +50,27 @@ public class StatsdClient implements StatsdClientInterface {
     }
 
     @Override
-    public void incrementCounter(String prefix, String bucket, HashMap<String,String> tags, int count) {
+    public void incrementCounter(String prefix, String bucket, Map<String,String> tags, int count) {
         client.incrementCounter(prefix, bucket, tags, count);
     }
 
     @Override
-    public void incrementSampleCounter(String prefix, String bucket, HashMap<String,String> tags, int count, double sampleRate) {
+    public void incrementSampleCounter(String prefix, String bucket, Map<String,String> tags, int count, double sampleRate) {
         client.incrementSampleCounter(prefix, bucket, tags, count, sampleRate);
     }
 
     @Override
-    public void gaugeReading(String prefix, String bucket, HashMap<String,String> tags, int count) {
+    public void gaugeReading(String prefix, String bucket, Map<String,String> tags, int count) {
         client.gaugeReading(prefix, bucket, tags, count);
     }
 
     @Override
-    public void timedEvent(String prefix, String bucket, HashMap<String,String> tags, int eventDurationInMs) {
+    public void timedEvent(String prefix, String bucket, Map<String,String> tags, int eventDurationInMs) {
         client.timedEvent(prefix, bucket, tags, eventDurationInMs);
     }
 
     @Override
-    public void incrementUniqueCounter(String prefix, String bucket, HashMap<String,String> tags, int count) {
+    public void incrementUniqueCounter(String prefix, String bucket, Map<String,String> tags, int count) {
         client.incrementUniqueCounter(prefix, bucket, tags, count);
     }
 
@@ -81,8 +82,8 @@ public class StatsdClient implements StatsdClientInterface {
         return connected.get();
     }
 
-    public org.felicity.statsd.impl.StatsdClient buildClient(UdpConnection connection) {
-        return new org.felicity.statsd.impl.StatsdClient(connection);
+    public com.ccycloud.aws.statsd.impl.StatsdClient buildClient(UdpConnection connection) {
+        return new com.ccycloud.aws.statsd.impl.StatsdClient(connection);
     }
 
     public void disconnect() {
