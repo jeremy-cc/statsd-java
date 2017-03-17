@@ -27,7 +27,7 @@ public class StatsdClient implements StatsdClientInterface {
     private AtomicBoolean configured = new AtomicBoolean(false);
     private AtomicBoolean connected = new AtomicBoolean(false);
 
-    public static final String version = "1.0.11";
+    public static final String version = "1.0.12";
 
     /**
      * Get an instance of the statsd object, configured with the passed config hash
