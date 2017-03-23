@@ -85,7 +85,8 @@ public class StatsdClient implements StatsdClientInterface{
         for(String k : tags.keySet()) {
             sb.append(String.format(TAG_BLOCK, k, tags.get(k)));
         }
-        return sb.substring(0, sb.length()-1); // omit final comma
+        String result = sb.toString();
+        return result.endsWith(",") ? result.substring(0, result.length() - 1) : result;
     }
 
     class Dispatcher implements Runnable {
