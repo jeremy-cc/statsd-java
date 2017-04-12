@@ -52,4 +52,20 @@ public class StatsdTest extends TestCase {
         Thread.sleep(1000l);
 
     }
+
+    @Test
+    public void testEmptyConnection() throws Exception {
+        Map<String,String> configuration = new HashMap<String,String>();
+        configuration.put("statsd.host", "lon1devlctl001.ccycloud.com");
+        configuration.put("statsd.port", "8125");
+
+        StatsdClient instance = StatsdClient.get(configuration);
+
+        HashMap<String,String> tags = new HashMap<String,String>();
+
+        instance.incrementCounter("pricing_engine", "test_counter", tags, 1);
+
+        Thread.sleep(1000l);
+
+    }
 }
