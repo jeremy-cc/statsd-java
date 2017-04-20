@@ -6,7 +6,7 @@
 
     <groupId>jruby</groupId>
     <artifactId>statsd-java-nonblocking</artifactId>
-    <version>1.0.14</version>
+    <version>1.0.15</version>
     <properties>
         <maven.compiler.source>1.6</maven.compiler.source>
         <maven.compiler.target>1.6</maven.compiler.target>
